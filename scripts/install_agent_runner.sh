@@ -52,6 +52,14 @@ MODAL_REMOTE_PUSH="1"
 MODAL_REMOTE_COMMIT_MESSAGE="modal remote update"
 MODAL_CPU="6"
 MODAL_MEMORY_MB="14336"
+
+# Safer GitHub review flow (optional)
+MODAL_REMOTE_PUSH_BRANCH=""
+MODAL_REMOTE_OPEN_PR="0"
+MODAL_REMOTE_PR_BASE="${DEFAULT_REPO_BRANCH}"
+MODAL_REMOTE_PR_TITLE=""
+MODAL_REMOTE_PR_BODY=""
+MODAL_REMOTE_PR_DRAFT="1"
 EOF
 fi
 
@@ -71,4 +79,9 @@ Examples:
 Remote-only mode (no local repo checkout):
   - Ensure MODAL_REMOTE_REPO_URL and MODAL_REMOTE_REPO_BRANCH are set in ${CONFIG_PATH}
   - Ensure Modal secret named github-token includes GITHUB_TOKEN
+
+Safer GitHub branch/PR flow:
+  - Set MODAL_REMOTE_PUSH_BRANCH to a non-default branch name
+  - Set MODAL_REMOTE_OPEN_PR=1 to create or reuse a pull request
+  - Optionally set MODAL_REMOTE_PR_BASE, MODAL_REMOTE_PR_TITLE, and MODAL_REMOTE_PR_BODY
 EOF

@@ -15,8 +15,20 @@ describe('AppController', () => {
   });
 
   describe('root', () => {
-    it('should return "Hello World!"', () => {
-      expect(appController.getHello()).toBe('Hello World!');
+    it('should expose overview links', () => {
+      const overview = appController.getOverview();
+
+      expect(overview).toMatchObject({
+        name: 'nestjs-fastify-boilerplate',
+        docs: '/docs-json',
+      });
+      expect(overview.routes).toEqual(
+        expect.arrayContaining([
+          '/health',
+          '/api/compute/presets',
+          '/api/compute/plan',
+        ]),
+      );
     });
   });
 });

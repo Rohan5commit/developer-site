@@ -1,0 +1,72 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  python-and-shell:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install modal
+
+      - name: Install zsh
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y zsh
+
+      - name: Run Python unit tests
+        run: python -m unittest discover -s tests -p 'test_*.py' -v
+
+      - name: Compile Python entrypoints
+        run: python -m compileall modal_tasks.py primary_compute.py scripts nim-claude-setup/server.py
+
+      - name: Validate bash scripts
+        run: |
+          find scripts -type f -name '*.sh' -print0 | xargs -0 -n1 bash -n
+          bash -n nim-claude-setup/nim-claude-proxy
+
+      - name: Validate zsh scripts
+        run: zsh -n nim-claude-setup/claude-nim.zsh
+
+  nestjs-fastify:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: nestjs-fastify-boilerplate
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: nestjs-fastify-boilerplate/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Build
+        run: npm run build
+
+      - name: Unit tests
+        run: npm test -- --runInBand
+
+      - name: E2E tests
+        run: npm run test:e2e -- --runInBand

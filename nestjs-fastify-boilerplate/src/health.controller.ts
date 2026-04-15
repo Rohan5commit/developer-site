@@ -2,14 +2,14 @@ import { Controller, Get } from '@nestjs/common';
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { AppService } from './app.service';
 
-@ApiTags('meta')
-@Controller()
-export class AppController {
+@ApiTags('health')
+@Controller('health')
+export class HealthController {
   constructor(private readonly appService: AppService) {}
 
   @Get()
-  @ApiOkResponse({ description: 'Project metadata and quick links.' })
-  getOverview() {
-    return this.appService.getOverview();
+  @ApiOkResponse({ description: 'Simple health and uptime response.' })
+  getHealth() {
+    return this.appService.getHealth();
   }
 }

@@ -8,13 +8,14 @@ if [[ "$SCRIPT_DIR" == "$SCRIPT_PATH" ]]; then
 fi
 SCRIPT_DIR="$(cd "$SCRIPT_DIR" && /bin/pwd)"
 ROOT_DIR="$(cd "${SCRIPT_DIR}/.." && /bin/pwd)"
+REPO_TAG="$(basename "$ROOT_DIR" | /usr/bin/tr -cs '[:alnum:]' '-')"
 
-BEGIN_ENV="# >>> modal-offload env (untitled-folder) >>>"
-END_ENV="# <<< modal-offload env (untitled-folder) <<<"
-BEGIN_HOOK="# >>> modal-offload hook (untitled-folder) >>>"
-END_HOOK="# <<< modal-offload hook (untitled-folder) <<<"
-BEGIN_BASH="# >>> modal-offload bash (untitled-folder) >>>"
-END_BASH="# <<< modal-offload bash (untitled-folder) <<<"
+BEGIN_ENV="# >>> modal-offload env (${REPO_TAG}) >>>"
+END_ENV="# <<< modal-offload env (${REPO_TAG}) <<<"
+BEGIN_HOOK="# >>> modal-offload hook (${REPO_TAG}) >>>"
+END_HOOK="# <<< modal-offload hook (${REPO_TAG}) <<<"
+BEGIN_BASH="# >>> modal-offload bash (${REPO_TAG}) >>>"
+END_BASH="# <<< modal-offload bash (${REPO_TAG}) <<<"
 
 strip_block() {
   local file="$1"
@@ -50,60 +51,60 @@ BLOCK
 }
 
 env_block="$BEGIN_ENV
-_modal_repo=\"$ROOT_DIR\"
-if [[ \"\$PWD\" == \"\$_modal_repo\" || \"\$PWD\" == \"\$_modal_repo/\"* ]]; then
-  if [[ -d \"\$_modal_repo/.modal-shims\" ]]; then
-    _modal_shims=\"\$_modal_repo/.modal-shims\"
-    _modal_path=\"\${PATH:-}\"
-    _modal_path=\":\${_modal_path}:\"
-    _modal_path=\"\${_modal_path//:\$_modal_shims:/:}\"
-    _modal_path=\"\${_modal_path#:}\"
-    _modal_path=\"\${_modal_path%:}\"
-    export PATH=\"\$_modal_shims\${_modal_path:+:\$_modal_path}\"
+_modal_repo="$ROOT_DIR"
+if [[ "\$PWD" == "\$_modal_repo" || "\$PWD" == "\$_modal_repo/"* ]]; then
+  if [[ -d "\$_modal_repo/.modal-shims" ]]; then
+    _modal_shims="\$_modal_repo/.modal-shims"
+    _modal_path="\${PATH:-}"
+    _modal_path=":\${_modal_path}:"
+    _modal_path="\${_modal_path//:\$_modal_shims:/:}"
+    _modal_path="\${_modal_path#:}"
+    _modal_path="\${_modal_path%:}"
+    export PATH="\$_modal_shims\${_modal_path:+:\$_modal_path}"
     unset _modal_path
     export MODAL_SHIMS_ACTIVE=1
-    export MODAL_CPU=\"\${MODAL_CPU:-6}\"
-    export MODAL_MEMORY_MB=\"\${MODAL_MEMORY_MB:-14336}\"
-    export MODAL_RUN_FLAGS=\"\${MODAL_RUN_FLAGS-}\"
-    export MODAL_SYNC_BACK=\"\${MODAL_SYNC_BACK:-1}\"
+    export MODAL_CPU="\${MODAL_CPU:-6}"
+    export MODAL_MEMORY_MB="\${MODAL_MEMORY_MB:-14336}"
+    export MODAL_RUN_FLAGS="\${MODAL_RUN_FLAGS-}"
+    export MODAL_SYNC_BACK="\${MODAL_SYNC_BACK:-1}"
     export MODAL_ROUTED_BY_SHIMS=1
-    export MODAL_REPO_ROOT=\"\$_modal_repo\"
+    export MODAL_REPO_ROOT="\$_modal_repo"
 
     _modal_exec_abs() {
-      \"\$MODAL_REPO_ROOT/scripts/modal_exec.sh\" -- \"\$1\" \"\${@:2}\"
+      "\$MODAL_REPO_ROOT/scripts/modal_exec.sh" -- "\$1" "\${@:2}"
     }
 
     _modal_wrap_python() {
-      local py_bin=\"\$1\"
+      local py_bin="\$1"
       shift
-      if [[ \"\${1:-}\" == \"-m\" && \"\${2:-}\" == \"modal\" ]]; then
-        command \"\$py_bin\" \"\$@\"
+      if [[ "\${1:-}" == "-m" && "\${2:-}" == "modal" ]]; then
+        command "\$py_bin" "\$@"
         return
       fi
-      _modal_exec_abs \"\${py_bin##*/}\" \"\$@\"
+      _modal_exec_abs "\${py_bin##*/}" "\$@"
     }
 
-    function /bin/ls() { _modal_exec_abs ls \"\$@\"; }
-    function /bin/cat() { _modal_exec_abs cat \"\$@\"; }
-    function /bin/rm() { _modal_exec_abs rm \"\$@\"; }
-    function /bin/mv() { _modal_exec_abs mv \"\$@\"; }
-    function /bin/cp() { _modal_exec_abs cp \"\$@\"; }
-    function /bin/mkdir() { _modal_exec_abs mkdir \"\$@\"; }
-    function /bin/touch() { _modal_exec_abs touch \"\$@\"; }
-    function /bin/hostname() { _modal_exec_abs hostname \"\$@\"; }
-    function /usr/bin/grep() { _modal_exec_abs grep \"\$@\"; }
-    function /usr/bin/find() { _modal_exec_abs find \"\$@\"; }
-    function /usr/bin/sed() { _modal_exec_abs sed \"\$@\"; }
-    function /usr/bin/awk() { _modal_exec_abs awk \"\$@\"; }
+    function /bin/ls() { _modal_exec_abs ls "\$@"; }
+    function /bin/cat() { _modal_exec_abs cat "\$@"; }
+    function /bin/rm() { _modal_exec_abs rm "\$@"; }
+    function /bin/mv() { _modal_exec_abs mv "\$@"; }
+    function /bin/cp() { _modal_exec_abs cp "\$@"; }
+    function /bin/mkdir() { _modal_exec_abs mkdir "\$@"; }
+    function /bin/touch() { _modal_exec_abs touch "\$@"; }
+    function /bin/hostname() { _modal_exec_abs hostname "\$@"; }
+    function /usr/bin/grep() { _modal_exec_abs grep "\$@"; }
+    function /usr/bin/find() { _modal_exec_abs find "\$@"; }
+    function /usr/bin/sed() { _modal_exec_abs sed "\$@"; }
+    function /usr/bin/awk() { _modal_exec_abs awk "\$@"; }
 
-    function /usr/bin/python3() { _modal_wrap_python /usr/bin/python3 \"\$@\"; }
-    function /usr/bin/python() { _modal_wrap_python /usr/bin/python \"\$@\"; }
-    function /opt/homebrew/bin/python3() { _modal_wrap_python /opt/homebrew/bin/python3 \"\$@\"; }
-    function /opt/homebrew/bin/python() { _modal_wrap_python /opt/homebrew/bin/python \"\$@\"; }
-    function /usr/local/bin/python3() { _modal_wrap_python /usr/local/bin/python3 \"\$@\"; }
-    function /usr/local/bin/python() { _modal_wrap_python /usr/local/bin/python \"\$@\"; }
-    function /opt/homebrew/bin/rg() { _modal_exec_abs rg \"\$@\"; }
-    function /usr/local/bin/rg() { _modal_exec_abs rg \"\$@\"; }
+    function /usr/bin/python3() { _modal_wrap_python /usr/bin/python3 "\$@"; }
+    function /usr/bin/python() { _modal_wrap_python /usr/bin/python "\$@"; }
+    function /opt/homebrew/bin/python3() { _modal_wrap_python /opt/homebrew/bin/python3 "\$@"; }
+    function /opt/homebrew/bin/python() { _modal_wrap_python /opt/homebrew/bin/python "\$@"; }
+    function /usr/local/bin/python3() { _modal_wrap_python /usr/local/bin/python3 "\$@"; }
+    function /usr/local/bin/python() { _modal_wrap_python /usr/local/bin/python "\$@"; }
+    function /opt/homebrew/bin/rg() { _modal_exec_abs rg "\$@"; }
+    function /usr/local/bin/rg() { _modal_exec_abs rg "\$@"; }
 
     unset _modal_shims
   fi
@@ -112,25 +113,25 @@ unset _modal_repo
 $END_ENV"
 
 hook_block="$BEGIN_HOOK
-_modal_repo=\"$ROOT_DIR\"
+_modal_repo="$ROOT_DIR"
 _modal_apply_repo_shims() {
-  if [[ \"\$PWD\" == \"\$_modal_repo\" || \"\$PWD\" == \"\$_modal_repo/\"* ]]; then
-    if [[ -d \"\$_modal_repo/.modal-shims\" ]]; then
-      _modal_shims=\"\$_modal_repo/.modal-shims\"
-      _modal_path=\"\${PATH:-}\"
-      _modal_path=\":\${_modal_path}:\"
-      _modal_path=\"\${_modal_path//:\$_modal_shims:/:}\"
-      _modal_path=\"\${_modal_path#:}\"
-      _modal_path=\"\${_modal_path%:}\"
-      export PATH=\"\$_modal_shims\${_modal_path:+:\$_modal_path}\"
+  if [[ "\$PWD" == "\$_modal_repo" || "\$PWD" == "\$_modal_repo/"* ]]; then
+    if [[ -d "\$_modal_repo/.modal-shims" ]]; then
+      _modal_shims="\$_modal_repo/.modal-shims"
+      _modal_path="\${PATH:-}"
+      _modal_path=":\${_modal_path}:"
+      _modal_path="\${_modal_path//:\$_modal_shims:/:}"
+      _modal_path="\${_modal_path#:}"
+      _modal_path="\${_modal_path%:}"
+      export PATH="\$_modal_shims\${_modal_path:+:\$_modal_path}"
       unset _modal_path
       export MODAL_SHIMS_ACTIVE=1
-      export MODAL_CPU=\"\${MODAL_CPU:-6}\"
-      export MODAL_MEMORY_MB=\"\${MODAL_MEMORY_MB:-14336}\"
-      export MODAL_RUN_FLAGS=\"\${MODAL_RUN_FLAGS-}\"
-      export MODAL_SYNC_BACK=\"\${MODAL_SYNC_BACK:-1}\"
+      export MODAL_CPU="\${MODAL_CPU:-6}"
+      export MODAL_MEMORY_MB="\${MODAL_MEMORY_MB:-14336}"
+      export MODAL_RUN_FLAGS="\${MODAL_RUN_FLAGS-}"
+      export MODAL_SYNC_BACK="\${MODAL_SYNC_BACK:-1}"
       export MODAL_ROUTED_BY_SHIMS=1
-      export MODAL_REPO_ROOT=\"\$_modal_repo\"
+      export MODAL_REPO_ROOT="\$_modal_repo"
       unset _modal_shims
     fi
   fi
@@ -144,23 +145,23 @@ unset _modal_repo
 $END_HOOK"
 
 bash_block="$BEGIN_BASH
-_modal_repo=\"$ROOT_DIR\"
-if [[ \"\$PWD\" == \"\$_modal_repo\" || \"\$PWD\" == \"\$_modal_repo/\"* ]]; then
-  if [[ -d \"\$_modal_repo/.modal-shims\" ]]; then
-    _modal_path=\"\${PATH:-}\"
-    _modal_path=\":\${_modal_path}:\"
-    _modal_path=\"\${_modal_path//:\$_modal_repo/.modal-shims:/:}\"
-    _modal_path=\"\${_modal_path#:}\"
-    _modal_path=\"\${_modal_path%:}\"
-    export PATH=\"\$_modal_repo/.modal-shims\${_modal_path:+:\$_modal_path}\"
+_modal_repo="$ROOT_DIR"
+if [[ "\$PWD" == "\$_modal_repo" || "\$PWD" == "\$_modal_repo/"* ]]; then
+  if [[ -d "\$_modal_repo/.modal-shims" ]]; then
+    _modal_path="\${PATH:-}"
+    _modal_path=":\${_modal_path}:"
+    _modal_path="\${_modal_path//:\$_modal_repo/.modal-shims:/:}"
+    _modal_path="\${_modal_path#:}"
+    _modal_path="\${_modal_path%:}"
+    export PATH="\$_modal_repo/.modal-shims\${_modal_path:+:\$_modal_path}"
     unset _modal_path
     export MODAL_SHIMS_ACTIVE=1
-    export MODAL_CPU=\"\${MODAL_CPU:-6}\"
-    export MODAL_MEMORY_MB=\"\${MODAL_MEMORY_MB:-14336}\"
-    export MODAL_RUN_FLAGS=\"\${MODAL_RUN_FLAGS-}\"
-    export MODAL_SYNC_BACK=\"\${MODAL_SYNC_BACK:-1}\"
+    export MODAL_CPU="\${MODAL_CPU:-6}"
+    export MODAL_MEMORY_MB="\${MODAL_MEMORY_MB:-14336}"
+    export MODAL_RUN_FLAGS="\${MODAL_RUN_FLAGS-}"
+    export MODAL_SYNC_BACK="\${MODAL_SYNC_BACK:-1}"
     export MODAL_ROUTED_BY_SHIMS=1
-    export MODAL_REPO_ROOT=\"\$_modal_repo\"
+    export MODAL_REPO_ROOT="\$_modal_repo"
   fi
 fi
 unset _modal_repo

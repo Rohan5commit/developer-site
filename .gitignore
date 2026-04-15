@@ -7,3 +7,9 @@ __pycache__/
 .venv/
 .primary_compute_modal_usage.json
 .modal-shims/
+.gemini/.env
+**/node_modules/
+**/dist/
+**/coverage/
+**/*.tsbuildinfo
+npm-debug.log*

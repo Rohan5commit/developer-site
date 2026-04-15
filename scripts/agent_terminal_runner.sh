@@ -14,6 +14,14 @@ Usage:
 Modes:
   1) Local repo mode (preferred): find scripts/modal_exec.sh from current directory tree.
   2) Remote repo mode: if MODAL_REMOTE_REPO_URL is set, run via global modal_remote_tasks.py.
+
+Review-flow helpers (set in config.env or the current shell):
+  MODAL_REMOTE_PUSH_BRANCH
+  MODAL_REMOTE_OPEN_PR=1
+  MODAL_REMOTE_PR_BASE
+  MODAL_REMOTE_PR_TITLE
+  MODAL_REMOTE_PR_BODY
+  MODAL_REMOTE_PR_DRAFT
 USAGE
 }
 

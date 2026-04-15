@@ -41,8 +41,23 @@ def _ignore_local_path(path: Path) -> bool:
         ".mypy_cache",
         ".ruff_cache",
         ".venv",
+        ".gemini",
+        ".vscode",
+        ".caches",
+        "node_modules",
+        "dist",
+        "coverage",
+        "build",
+        ".next",
+        ".turbo",
     }
-    return any(part in ignored_parts for part in path.parts) or path.name in {".DS_Store"}
+    ignored_names = {".DS_Store", "npm-debug.log"}
+    ignored_suffixes = (".tsbuildinfo",)
+    return (
+        any(part in ignored_parts for part in path.parts)
+        or path.name in ignored_names
+        or any(path.name.endswith(suffix) for suffix in ignored_suffixes)
+    )
 
 
 image = modal.Image.debian_slim()
