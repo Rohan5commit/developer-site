@@ -8,3 +8,4 @@ To see the avatar, place your `.vrm` file in `public/avatars/`. If you do not ha
 EOF
 docs: minor update
 docs: minor update
+docs: minor update
